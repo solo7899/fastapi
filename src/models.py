@@ -1,6 +1,7 @@
+import datetime
+
 from sqlmodel import SQLModel, Field, Relationship
 from pydantic import EmailStr
-from datetime import datetime
 
 
 
@@ -9,7 +10,7 @@ class User(SQLModel, table=True):
     username: str = Field(index=True, unique=True)
     email: EmailStr = Field(unique=True)
     password: str = Field(min_length=8)
-    created_at: datetime = Field(default_factory=datetime.now())
+    created_at: datetime = Field(default_factory=datetime.datetime.now(datetime.timezone.utc))
 
     posts: list["Post"] | None = Relationship(back_populates="user")
 
@@ -17,7 +18,7 @@ class User(SQLModel, table=True):
 class Post(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     content: str = Field()
-    created_at: datetime = Field(default_factory=datetime.now())
+    created_at: datetime = Field(default_factory=datetime.datetime.now(datetime.timezone.utc))
 
     user_id: int = Field(foreign_key="user.id")
     user: User|None = Relationship(back_populates="posts")
