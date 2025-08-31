@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from src import schemas
+from src import schemas, db, models
+from sqlmodel import select
 
 
 router = APIRouter(prefix = "/users", tags=["users"])
@@ -21,5 +22,6 @@ users = [
     }
 ]
 @router.get("/", response_model=list[schemas.UserOut])
-async def get_users_list():
+async def get_users_list(session: db.SessionDep):
+    users = session.exec(select(models.User))
     return users
