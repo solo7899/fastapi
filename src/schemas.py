@@ -14,7 +14,6 @@ class UserIn(UserBase):
 
 class UserOut(UserBase):
     id: int
-    username: str
     created_at: datetime
     #todo: add posts list
 
