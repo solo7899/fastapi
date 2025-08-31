@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from src import schemas
 
 
-router = APIRouter("/users", tags=["users"])
+router = APIRouter(prefix = "/users", tags=["users"])
 
 users = [
     {
