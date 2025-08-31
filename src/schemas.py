@@ -17,3 +17,19 @@ class UserOut(UserBase):
     username: str
     created_at: datetime
     #todo: add posts list
+
+
+class PostBase(BaseModel):
+    content: str = Field(max_length=100)
+
+
+class PostIn(PostBase):
+    #todo: later it will get it from JWT
+    user_id: int
+
+
+class PostOut(PostBase):
+    id: int
+    content: str
+    created_at: datetime
+    user: UserOut
