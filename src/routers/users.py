@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from src import schemas, db, models
 from sqlmodel import select
 
@@ -25,3 +25,12 @@ users = [
 async def get_users_list(session: db.SessionDep):
     users = session.exec(select(models.User))
     return users
+
+
+@router.post("/signup", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
+async def sign_up(user: schemas.UserSignUp, session: db.SessionDep):
+    user = models.User(**user.model_dump())
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
