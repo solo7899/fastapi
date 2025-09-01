@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 from sqlmodel import select
 
 from src import  schemas, db, models
-from utils import SECRET, ALGORITHM
+from utils import SECRET, ALGORITHM, ACCESS_TOKEN_EXPIRE_HOURS
 
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
@@ -69,3 +69,19 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     if user is None:
         raise credentials_exception
     return user
+
+@router.post('/token')
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> schemas.Token:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="incorrect username or password",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise credentials_exception
+    
+    access_token_expires = datetime.timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
+    access_token = create_access_token(data={'sub': user.username}, expires_delta=access_token_expires)
+
+    return schemas.Token(access_token=access_token, token_type='bearer')

@@ -6,5 +6,6 @@ load_dotenv()
 
 SECRET = os.getenv("SECRET")
 ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_HOURS = os.getenv("ACCESS_TOKEN_EXPIRE_HOURS")
 
 
