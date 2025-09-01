@@ -32,3 +32,8 @@ class PostOut(PostBase):
     content: str
     created_at: datetime
     user: UserOut
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
