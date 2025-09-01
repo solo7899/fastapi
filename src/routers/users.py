@@ -32,11 +32,7 @@ async def sign_up(user: schemas.UserSignUp, session: db.SessionDep):
     return user
 
 
-@router.post("/signin", response_model=schemas.UserOut)
-async def sign_in(user: Annotated[schemas.UserIn, Form()], session: db.SessionDep):
-    user_exists = session.exec(select(models.User).where((user.username == models.User.username) & (user.password == models.User.password))).first()
-
-    if not user_exists:
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="wrong username or password ")
-    
-    return  user_exists
+# @router.post("/signin", response_model=schemas.UserOut)
+@router.post('/signin', response_model=schemas.Token)
+async def sign_in():
+    return auth.login_for_access_token()
