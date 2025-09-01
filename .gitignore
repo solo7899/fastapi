@@ -2,3 +2,4 @@ database.db
 __pychache__/
 src/__pycache__/
 src/routers/__pycache__/
+.env
