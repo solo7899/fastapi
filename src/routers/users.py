@@ -3,6 +3,8 @@ from src import schemas, db, models
 from sqlmodel import select
 from typing import Annotated
 
+from . import auth
+
 
 router = APIRouter(prefix = "/users", tags=["users"])
 
@@ -12,6 +14,7 @@ async def get_users_list(session: db.SessionDep):
     users = session.exec(select(models.User))
     return users
 
+#todo: hashing for user sign in and sign up
 
 @router.post("/signup", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
 async def sign_up(user: schemas.UserSignUp, session: db.SessionDep):
@@ -21,6 +24,7 @@ async def sign_up(user: schemas.UserSignUp, session: db.SessionDep):
     if check_username_or_email_existence:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username or email already in use")
 
+    user.password = auth.get_password_hash(user.password)
     user = models.User(**user.model_dump())
     session.add(user)
     session.commit()
