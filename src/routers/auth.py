@@ -7,7 +7,7 @@ from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from sqlmodel import select
 
-from src import utils, schemas, db, models
+from src import  schemas, db, models
 from utils import SECRET, ALGORITHM
 
 
@@ -15,6 +15,20 @@ pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def authenticate_user(username: str, password: str):
+    user = get_user(username)
+    if not user:
+        return False
+    if not verify_password(password, user.password):
+        return False
+    return user
 
 def create_access_token(data: dict, expires_delta: datetime.timedelta  | None = None):
     to_encode = data.copy()
@@ -32,7 +46,7 @@ def create_access_token(data: dict, expires_delta: datetime.timedelta  | None = 
 def get_user(username, session: db.SessionDep):
     user = session.exec(select(models.User).where(username == models.User.username)).first()
     if user:
-        return schemas.UserOut(**user.model_dump())
+        return user
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
