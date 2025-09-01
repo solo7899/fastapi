@@ -1,7 +1,6 @@
-from fastapi import APIRouter, status, HTTPException, Form
+from fastapi import APIRouter, status, HTTPException, Depends
 from src import schemas, db, models
 from sqlmodel import select
-from typing import Annotated
 
 from . import auth
 
@@ -33,6 +32,6 @@ async def sign_up(user: schemas.UserSignUp, session: db.SessionDep):
 
 
 # @router.post("/signin", response_model=schemas.UserOut)
-@router.post('/signin', response_model=schemas.Token)
-async def sign_in():
-    return auth.login_for_access_token()
+# @router.post('/signin', response_model=schemas.Token)
+# async def sign_in(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+#     return auth.login_for_access_token(form_data=form_data)

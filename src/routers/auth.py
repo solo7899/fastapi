@@ -22,8 +22,8 @@ def get_password_hash(password):
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-def authenticate_user(username: str, password: str):
-    user = get_user(username)
+def authenticate_user(username: str, password: str, session: db.Session):
+    user = get_user(username, session)
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -43,8 +43,8 @@ def create_access_token(data: dict, expires_delta: datetime.timedelta  | None = 
 
     return encoded_jwt
 
-def get_user(username, session: db.SessionDep):
-    user = session.exec(select(models.User).where(username == models.User.username)).first()
+def get_user(username, session: db.Session):
+    user = session.exec(select(models.User).where(models.User.username == username )).first()
     if user:
         return user
 
@@ -71,13 +71,13 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     return user
 
 @router.post('/token')
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> schemas.Token:
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: db.SessionDep) -> schemas.Token:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="incorrect username or password",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    user = authenticate_user(form_data.username, form_data.password)
+    user = authenticate_user(form_data.username, form_data.password, session=session)
     if not user:
         raise credentials_exception
     
