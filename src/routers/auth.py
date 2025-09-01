@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 from sqlmodel import select
 
 from src import  schemas, db, models
-from utils import SECRET, ALGORITHM, ACCESS_TOKEN_EXPIRE_HOURS
+from src.utils import SECRET, ALGORITHM, ACCESS_TOKEN_EXPIRE_HOURS
 
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
