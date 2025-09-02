@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, HTTPException, Depends
-from src import schemas, db, models
+from src import schemas, db, models, oauth2
 from sqlmodel import select
 from typing import Annotated
 
@@ -10,7 +10,7 @@ router = APIRouter(prefix = "/users", tags=["users"])
 
 
 @router.get("/", response_model=list[schemas.UserOut])
-async def get_users_list(session:  db.SessionDep, current_user: Annotated[models.User, Depends(auth.get_current_user)]):
+async def get_users_list(session:  db.SessionDep, current_user: Annotated[models.User, Depends(oauth2.get_current_user)]):
     users = session.exec(select(models.User))
     return users
 
