@@ -1,23 +1,22 @@
 from fastapi import APIRouter, status, HTTPException, Depends
 from src import schemas, db, models
 from sqlmodel import select
+from typing import Annotated
 
 from . import auth
 
-
+#todo: make everything token dependant
 router = APIRouter(prefix = "/users", tags=["users"])
 
 
 @router.get("/", response_model=list[schemas.UserOut])
-async def get_users_list(session: db.SessionDep):
+async def get_users_list(session:  db.SessionDep, current_user: Annotated[models.User, Depends(auth.get_current_user)]):
     users = session.exec(select(models.User))
     return users
 
-#todo: hashing for user sign in and sign up
 
 @router.post("/signup", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
 async def sign_up(user: schemas.UserSignUp, session: db.SessionDep):
-    #todo : error handling needed
     check_username_or_email_existence = session.exec(select(models.User).where(
         (user.username == models.User.username) | (models.User.email == user.email))).first()
     if check_username_or_email_existence:
