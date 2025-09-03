@@ -28,6 +28,7 @@ class PostIn(PostBase):
 class PostOut(PostBase):
     id: int
     created_at: datetime
+    updated_at: datetime | None
     user: UserOut
 
 
