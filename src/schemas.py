@@ -29,7 +29,6 @@ class PostIn(PostBase):
 
 class PostOut(PostBase):
     id: int
-    content: str
     created_at: datetime
     user: UserOut
 
