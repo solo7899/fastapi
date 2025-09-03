@@ -23,9 +23,7 @@ class PostBase(BaseModel):
 
 
 class PostIn(PostBase):
-    #todo: later it will get it from JWT
-    user_id: int
-
+    pass
 
 class PostOut(PostBase):
     id: int
