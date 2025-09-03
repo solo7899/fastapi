@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException, Response
 from sqlmodel import select
 from typing import Annotated
 
@@ -20,3 +20,16 @@ async def create_post(post: schemas.PostIn, user: Annotated[models.User, Depends
     session.commit()
     session.refresh(new_post)
     return new_post
+
+
+@router.delete("/delete/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(post_id: int, user: Annotated[models.User, Depends(oauth2.get_current_user)], session: db.SessionDep):
+    post = session.get(models.Post, post_id)
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+    if post.user_id != user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform requested action")
+    
+    session.delete(post)
+    session.commit()
+    return Response(content="Message deleted successfully", status_code=status.HTTP_204_NO_CONTENT)
