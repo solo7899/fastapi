@@ -10,8 +10,8 @@ router = APIRouter(prefix = "/users", tags=["users"])
 
 
 @router.get("/", response_model=list[schemas.UserOut])
-async def get_users_list(session:  db.SessionDep, current_user: Annotated[models.User, Depends(oauth2.get_current_user)]):
-    users = session.exec(select(models.User))
+async def get_users_list(session:  db.SessionDep, current_user: Annotated[models.User, Depends(oauth2.get_current_user)], skip: int = 0, limit: int = 100):
+    users = session.exec(select(models.User).offset(skip).limit(limit)).all()
     return users
 
 
