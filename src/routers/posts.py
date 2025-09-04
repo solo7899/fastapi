@@ -7,10 +7,11 @@ from src import oauth2, db, models, schemas
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
+#todo: limit and skip 
 
 @router.get("/", response_model=list[schemas.PostOut])
-async def get_posts_list(user: Annotated[str, Depends(oauth2.get_current_user)], session: db.SessionDep):
-    posts = session.exec(select(models.Post)).all()
+async def get_posts_list(user: Annotated[str, Depends(oauth2.get_current_user)], session: db.SessionDep, skip: int = 0, limit: int = 20):
+    posts = session.exec(select(models.Post).offset(skip).limit(limit)).all()
     return posts
 
 
