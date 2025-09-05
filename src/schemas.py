@@ -23,6 +23,7 @@ class PostBase(BaseModel):
 
 
 class PostIn(PostBase):
+    group_id: int
     pass
 
 class PostOut(PostBase):
