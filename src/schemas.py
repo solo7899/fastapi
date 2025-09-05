@@ -39,3 +39,15 @@ class Token(BaseModel):
 
 class TokneData(BaseModel):
     username: str
+
+
+class GroupBase(BaseModel):
+    name: str = Field(min_length=3, max_length=30)
+
+class GroupIn(GroupBase):
+    pass
+
+class GroupOut(GroupBase):
+    id: int
+    members: list[UserOut] | None
+    posts: list[PostOut] | None
