@@ -17,6 +17,9 @@ async def get_posts_list(user: Annotated[str, Depends(oauth2.get_current_user)],
 
 @router.post("/create", response_model=schemas.PostOut, status_code=status.HTTP_201_CREATED)
 async def create_post(post: schemas.PostIn, user: Annotated[models.User, Depends(oauth2.get_current_user)], session: db.SessionDep):
+    is_group = session.get(models.Group, post.group_id).first()
+    if not is_group:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
     joined = session.exec(select(models.User_Group).where((models.User_Group.user_id == user.id) & models.User_Group.group_id == post.group_id)).first()
     if not joined: 
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You must join the group to post")
