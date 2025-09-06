@@ -23,7 +23,7 @@ class PostBase(BaseModel):
 
 
 class PostIn(PostBase):
-    group_id: int
+    group_name: str = Field(max_length=30)
     pass
 
 class PostOut(PostBase):

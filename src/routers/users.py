@@ -22,7 +22,7 @@ async def sign_up(user: schemas.UserSignUp, session: db.SessionDep):
     if check_username_or_email_existence:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username or email already in use")
 
-    user.password = auth.get_password_hash(user.password)
+    user.password = oauth2.get_password_hash(user.password)
     user = models.User(**user.model_dump())
     session.add(user)
     session.commit()
